@@ -35,7 +35,6 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* ── Video background ── */
   #bg-video {
     position: fixed; inset: 0;
     width: 100%; height: 100%;
@@ -45,7 +44,6 @@
     pointer-events: none;
   }
 
-  /* Gradient fallback / overlay */
   #bg-gradient {
     position: fixed; inset: 0;
     background:
@@ -56,7 +54,6 @@
     pointer-events: none;
   }
 
-  /* ── Screens ── */
   .screen {
     position: fixed; inset: 0;
     display: flex; flex-direction: column;
@@ -71,10 +68,7 @@
     transform: translateY(16px);
   }
 
-  /* ── Registration ── */
-  #reg-screen {
-    gap: 0;
-  }
+  #reg-screen { gap: 0; }
 
   .reg-title {
     font-family: 'Cormorant Garamond', serif;
@@ -129,10 +123,7 @@
     box-shadow: 0 0 0 3px rgba(126,184,212,0.08);
   }
 
-  /* Gender tabs */
-  .gender-tabs {
-    display: flex; gap: 8px;
-  }
+  .gender-tabs { display: flex; gap: 8px; }
   .gender-tab {
     flex: 1;
     padding: 13px 8px;
@@ -175,11 +166,13 @@
     background: linear-gradient(135deg, rgba(126,184,212,0.3), rgba(168,213,181,0.22));
   }
 
-  /* ── Practice select ── */
   #practice-screen {
     justify-content: flex-start;
     padding-top: 56px;
-    overflow-y: auto;
+    padding-bottom: 40px;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
     gap: 0;
   }
 
@@ -267,10 +260,7 @@
     white-space: nowrap;
   }
 
-  /* ── Breathing screen ── */
-  #breath-screen {
-    gap: 0;
-  }
+  #breath-screen { gap: 0; }
 
   .top-bar {
     position: fixed; top: 0; left: 0; right: 0;
@@ -299,7 +289,6 @@
     color: var(--text-dim);
   }
 
-  /* Breathing circle */
   .circle-wrap {
     position: relative;
     width: min(280px, 72vw);
@@ -364,7 +353,6 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* Glow ring — animated separately */
   .circle-glow {
     position: absolute; inset: -8px;
     border-radius: 50%;
@@ -374,7 +362,6 @@
   }
   .circle-glow.inhale { box-shadow: 0 0 40px 12px var(--glow); }
 
-  /* Phase description */
   .phase-desc {
     font-size: 0.78rem;
     letter-spacing: 0.12em;
@@ -385,7 +372,6 @@
     margin-bottom: 32px;
   }
 
-  /* Cycles */
   .cycles-wrap {
     display: flex; align-items: center; gap: 16px;
     margin-bottom: 36px;
@@ -396,9 +382,7 @@
     text-transform: uppercase;
     color: var(--text-dim);
   }
-  .cycles-dots {
-    display: flex; gap: 6px;
-  }
+  .cycles-dots { display: flex; gap: 6px; }
   .cycle-dot {
     width: 6px; height: 6px;
     border-radius: 50%;
@@ -411,10 +395,7 @@
     box-shadow: 0 0 8px var(--glow);
   }
 
-  /* Controls */
-  .controls {
-    display: flex; gap: 16px; align-items: center;
-  }
+  .controls { display: flex; gap: 16px; align-items: center; }
   .btn-control {
     padding: 14px 36px;
     background: linear-gradient(135deg, rgba(126,184,212,0.18), rgba(168,213,181,0.12));
@@ -437,7 +418,6 @@
     color: var(--text-dim);
   }
 
-  /* ── Music panel ── */
   .music-panel {
     position: fixed; bottom: 0; left: 0; right: 0;
     background: rgba(5,8,16,0.85);
@@ -457,9 +437,7 @@
     color: var(--text-dim);
     margin-bottom: 12px;
   }
-  .music-tracks {
-    display: flex; flex-wrap: wrap; gap: 8px;
-  }
+  .music-tracks { display: flex; flex-wrap: wrap; gap: 8px; }
   .music-track-btn {
     padding: 9px 16px;
     background: var(--surface);
@@ -477,15 +455,8 @@
     border-color: rgba(126,184,212,0.4);
     color: var(--accent);
   }
-  .music-track-btn:disabled {
-    opacity: 0.35;
-    cursor: default;
-  }
 
-  /* ── Completion screen ── */
-  #done-screen {
-    gap: 0;
-  }
+  #done-screen { gap: 0; }
   .done-icon {
     font-size: 3rem;
     margin-bottom: 16px;
@@ -524,12 +495,10 @@
     width: 100%; max-width: 320px;
   }
 
-  /* Scrollbar */
   #practice-screen::-webkit-scrollbar { width: 3px; }
   #practice-screen::-webkit-scrollbar-track { background: transparent; }
   #practice-screen::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-  /* Noise overlay */
   body::after {
     content: '';
     position: fixed; inset: 0;
@@ -542,22 +511,16 @@
 </head>
 <body>
 
-<!-- Background -->
 <video id="bg-video" autoplay muted loop playsinline src="bg.mp4"></video>
 <div id="bg-gradient"></div>
 
-<!-- ══════════════════════════════════════════
-     SCREEN 1: Registration
-══════════════════════════════════════════ -->
 <div class="screen" id="reg-screen">
   <div class="reg-title">Дыхание</div>
   <div class="reg-subtitle">Медитативные практики</div>
-
   <div class="form-group">
     <label class="form-label">Ваше имя</label>
     <input class="form-input" id="inp-name" type="text" placeholder="Введите имя" maxlength="30" autocomplete="off">
   </div>
-
   <div class="form-group">
     <label class="form-label">Пол</label>
     <div class="gender-tabs">
@@ -565,43 +528,28 @@
       <div class="gender-tab" data-gender="ж">♀ Женский</div>
     </div>
   </div>
-
   <div class="form-group">
     <label class="form-label">Возраст</label>
     <input class="form-input" id="inp-age" type="number" placeholder="Лет" min="5" max="100">
   </div>
-
   <button class="btn-primary" id="btn-start">Начать →</button>
 </div>
 
-
-<!-- ══════════════════════════════════════════
-     SCREEN 2: Practice selection
-══════════════════════════════════════════ -->
 <div class="screen hidden" id="practice-screen">
   <div class="greet-block">
     <div class="greet-name" id="greet-name">Привет</div>
     <div class="greet-sub">Выберите практику</div>
   </div>
-
   <div class="section-label">Рекомендовано для вас</div>
   <div class="practice-list" id="practice-list"></div>
 </div>
 
-
-<!-- ══════════════════════════════════════════
-     SCREEN 3: Breathing
-══════════════════════════════════════════ -->
 <div class="screen hidden" id="breath-screen">
-
-  <!-- Top bar -->
   <div class="top-bar">
-    <button class="btn-icon" id="btn-back" title="Назад">←</button>
+    <button class="btn-icon" id="btn-back">←</button>
     <div class="practice-title-bar" id="practice-title-bar"></div>
-    <button class="btn-icon" id="btn-music" title="Музыка">♪</button>
+    <button class="btn-icon" id="btn-music">♪</button>
   </div>
-
-  <!-- Circle -->
   <div class="circle-wrap">
     <div class="circle-outer"></div>
     <div class="circle-glow" id="circle-glow"></div>
@@ -614,40 +562,28 @@
       </defs>
       <circle class="circle-track" cx="50" cy="50" r="46"/>
       <circle class="circle-progress" id="circle-progress" cx="50" cy="50" r="46"
-        stroke-dasharray="289.03"
-        stroke-dashoffset="289.03"/>
+        stroke-dasharray="289.03" stroke-dashoffset="289.03"/>
     </svg>
     <div class="circle-inner" id="circle-inner">
       <div class="phase-label" id="phase-label">Вдох</div>
       <div class="phase-timer" id="phase-timer">—</div>
     </div>
   </div>
-
   <div class="phase-desc" id="phase-desc"></div>
-
-  <!-- Cycles -->
   <div class="cycles-wrap">
     <div class="cycles-label">Циклы</div>
     <div class="cycles-dots" id="cycles-dots"></div>
   </div>
-
-  <!-- Controls -->
   <div class="controls">
     <button class="btn-control stop" id="btn-stop">✕</button>
     <button class="btn-control" id="btn-pause">Пауза</button>
   </div>
-
-  <!-- Music panel -->
   <div class="music-panel" id="music-panel">
     <div class="music-panel-title">Фоновая музыка</div>
     <div class="music-tracks" id="music-tracks"></div>
   </div>
 </div>
 
-
-<!-- ══════════════════════════════════════════
-     SCREEN 4: Done
-══════════════════════════════════════════ -->
 <div class="screen hidden" id="done-screen">
   <div class="done-icon">✦</div>
   <div class="done-title">Практика завершена</div>
@@ -659,114 +595,78 @@
   </div>
 </div>
 
-
 <script>
-// ═══════════════════════════════════════════
-//  DATA
-// ═══════════════════════════════════════════
 const PRACTICES = [
   {
-    id: 'kids',
-    icon: '🌸',
-    name: 'Детское спокойствие',
-    desc: 'Мягкое дыхание для расслабления',
-    age: [5, 12],
-    cycles: 5,
+    id: 'kids', icon: '🌸', name: 'Детское спокойствие',
+    desc: 'Мягкое дыхание для расслабления', age: [5, 12], cycles: 5,
     phases: [
-      { label: 'Вдох',   hint: 'Медленно вдохни через нос', dur: 3, type: 'in'  },
-      { label: 'Выдох',  hint: 'Плавно выдохни через рот',  dur: 5, type: 'out' }
+      { label: 'Вдох',  hint: 'Медленно вдохни через нос', dur: 3, type: 'in'  },
+      { label: 'Выдох', hint: 'Плавно выдохни через рот',  dur: 5, type: 'out' }
     ]
   },
   {
-    id: 'box',
-    icon: '⬜',
-    name: 'Квадратное дыхание',
-    desc: '4-4-4-4 · Армейская техника фокуса',
-    age: [8, 100],
-    cycles: 6,
+    id: 'box', icon: '⬜', name: 'Квадратное дыхание',
+    desc: '4-4-4-4 · Армейская техника фокуса', age: [8, 100], cycles: 6,
     phases: [
-      { label: 'Вдох',    hint: 'Вдох через нос',   dur: 4, type: 'in'   },
-      { label: 'Задержка',hint: 'Задержи дыхание',  dur: 4, type: 'hold' },
-      { label: 'Выдох',   hint: 'Выдох через рот',  dur: 4, type: 'out'  },
-      { label: 'Пауза',   hint: 'Отдых',            dur: 4, type: 'hold' }
+      { label: 'Вдох',     hint: 'Вдох через нос',  dur: 4, type: 'in'   },
+      { label: 'Задержка', hint: 'Задержи дыхание', dur: 4, type: 'hold' },
+      { label: 'Выдох',    hint: 'Выдох через рот', dur: 4, type: 'out'  },
+      { label: 'Пауза',    hint: 'Отдых',           dur: 4, type: 'hold' }
     ]
   },
   {
-    id: '478',
-    icon: '🌙',
-    name: '4-7-8 Расслабление',
-    desc: 'Снятие тревоги · Лучший сон',
-    age: [12, 100],
-    cycles: 4,
+    id: '478', icon: '🌙', name: '4-7-8 Расслабление',
+    desc: 'Снятие тревоги · Лучший сон', age: [12, 100], cycles: 4,
     phases: [
-      { label: 'Вдох',    hint: 'Вдох через нос',       dur: 4, type: 'in'   },
-      { label: 'Задержка',hint: 'Удержи дыхание',       dur: 7, type: 'hold' },
-      { label: 'Выдох',   hint: 'Выдох через рот (8с)', dur: 8, type: 'out'  }
+      { label: 'Вдох',     hint: 'Вдох через нос',       dur: 4, type: 'in'   },
+      { label: 'Задержка', hint: 'Удержи дыхание',       dur: 7, type: 'hold' },
+      { label: 'Выдох',    hint: 'Выдох через рот (8с)', dur: 8, type: 'out'  }
     ]
   },
   {
-    id: 'teen',
-    icon: '⚡',
-    name: 'Баланс для подростков',
-    desc: 'Стресс перед экзаменами · Концентрация',
-    age: [13, 20],
-    cycles: 6,
+    id: 'teen', icon: '⚡', name: 'Баланс для подростков',
+    desc: 'Стресс перед экзаменами · Концентрация', age: [13, 20], cycles: 6,
     phases: [
-      { label: 'Вдох',   hint: 'Глубокий вдох',   dur: 4, type: 'in'   },
-      { label: 'Выдох',  hint: 'Долгий выдох',    dur: 6, type: 'out'  }
+      { label: 'Вдох',  hint: 'Глубокий вдох', dur: 4, type: 'in'  },
+      { label: 'Выдох', hint: 'Долгий выдох',  dur: 6, type: 'out' }
     ]
   },
   {
-    id: 'coherent',
-    icon: '〇',
-    name: 'Когерентное дыхание',
-    desc: '5 вдохов/мин · Сердечный ритм',
-    age: [14, 100],
-    cycles: 5,
+    id: 'coherent', icon: '〇', name: 'Когерентное дыхание',
+    desc: '5 вдохов/мин · Сердечный ритм', age: [14, 100], cycles: 5,
     phases: [
-      { label: 'Вдох',  hint: 'Ровный вдох',   dur: 6, type: 'in'  },
-      { label: 'Выдох', hint: 'Ровный выдох',  dur: 6, type: 'out' }
+      { label: 'Вдох',  hint: 'Ровный вдох',  dur: 6, type: 'in'  },
+      { label: 'Выдох', hint: 'Ровный выдох', dur: 6, type: 'out' }
     ]
   },
   {
-    id: 'wimhof',
-    icon: '🔥',
-    name: 'Активация (Вим Хоф)',
-    desc: 'Энергия · Иммунитет · 18–65 лет',
-    age: [18, 65],
-    cycles: 3,
+    id: 'wimhof', icon: '🔥', name: 'Активация (Вим Хоф)',
+    desc: 'Энергия · Иммунитет · 18–65 лет', age: [18, 65], cycles: 3,
     phases: [
-      { label: 'Вдох',    hint: 'Мощный вдох',      dur: 2, type: 'in'   },
-      { label: 'Выдох',   hint: 'Лёгкий выдох',     dur: 2, type: 'out'  },
-      { label: 'Задержка',hint: 'Удержи (финал)',    dur: 15, type: 'hold' }
+      { label: 'Вдох',     hint: 'Мощный вдох',   dur: 2,  type: 'in'   },
+      { label: 'Выдох',    hint: 'Лёгкий выдох',  dur: 2,  type: 'out'  },
+      { label: 'Задержка', hint: 'Удержи (финал)', dur: 15, type: 'hold' }
     ]
   },
   {
-    id: 'senior',
-    icon: '🌿',
-    name: 'Мягкое восстановление',
-    desc: 'Давление · Сердечный ритм · 55+',
-    age: [55, 100],
-    cycles: 6,
+    id: 'senior', icon: '🌿', name: 'Мягкое восстановление',
+    desc: 'Давление · Сердечный ритм · 55+', age: [55, 100], cycles: 6,
     phases: [
-      { label: 'Вдох',  hint: 'Нежный вдох',  dur: 4, type: 'in'  },
-      { label: 'Пауза', hint: 'Мягкая пауза', dur: 2, type: 'hold'},
-      { label: 'Выдох', hint: 'Долгий выдох', dur: 6, type: 'out' }
+      { label: 'Вдох',  hint: 'Нежный вдох',  dur: 4, type: 'in'   },
+      { label: 'Пауза', hint: 'Мягкая пауза', dur: 2, type: 'hold' },
+      { label: 'Выдох', hint: 'Долгий выдох', dur: 6, type: 'out'  }
     ]
   }
 ];
 
 const TRACKS = [
-  { id: 'none',    name: 'Без музыки',  file: null },
-  { id: 'flying',  name: 'Flying',      file: 'music/flying.mp3' }
+  { id: 'none',   name: 'Без музыки', file: null },
+  { id: 'flying', name: 'Flying',     file: 'music/flying.mp3' }
 ];
 
-// Audio freqs for phase cues (Web Audio API)
 const TONE_FREQ = { in: 528, hold: 396, out: 285 };
 
-// ═══════════════════════════════════════════
-//  STATE
-// ═══════════════════════════════════════════
 let user = { name: '', gender: 'м', age: 25 };
 let selectedGender = 'м';
 let currentPractice = null;
@@ -781,9 +681,6 @@ let currentTrack = 'none';
 let audioCtx = null;
 let musicPanelOpen = false;
 
-// ═══════════════════════════════════════════
-//  PERSISTENCE
-// ═══════════════════════════════════════════
 function saveUser() {
   try { localStorage.setItem('breath_user', JSON.stringify(user)); } catch(e) {}
 }
@@ -795,17 +692,11 @@ function loadUser() {
   return false;
 }
 
-// ═══════════════════════════════════════════
-//  SCREENS
-// ═══════════════════════════════════════════
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
   document.getElementById(id).classList.remove('hidden');
 }
 
-// ═══════════════════════════════════════════
-//  REGISTRATION
-// ═══════════════════════════════════════════
 document.querySelectorAll('.gender-tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.gender-tab').forEach(t => t.classList.remove('active'));
@@ -826,27 +717,19 @@ document.getElementById('btn-start').addEventListener('click', () => {
 });
 
 function shake(el) {
-  el.style.animation = 'none';
   el.style.borderColor = 'rgba(212,126,126,0.6)';
   setTimeout(() => { el.style.borderColor = ''; }, 1200);
 }
 
-// ═══════════════════════════════════════════
-//  PRACTICE SELECTION
-// ═══════════════════════════════════════════
 function initPracticeScreen() {
   document.getElementById('greet-name').textContent = user.name;
-
   const list = document.getElementById('practice-list');
   list.innerHTML = '';
-
-  // Sort: recommended first
   const sorted = [...PRACTICES].sort((a, b) => {
     const aRec = user.age >= a.age[0] && user.age <= a.age[1];
     const bRec = user.age >= b.age[0] && user.age <= b.age[1];
     return bRec - aRec;
   });
-
   sorted.forEach(p => {
     const rec = user.age >= p.age[0] && user.age <= p.age[1];
     const el = document.createElement('div');
@@ -864,22 +747,16 @@ function initPracticeScreen() {
   });
 }
 
-// ═══════════════════════════════════════════
-//  BREATHING ENGINE
-// ═══════════════════════════════════════════
 function startPractice(practice) {
   currentPractice = practice;
   cyclesDone = 0;
   phaseIdx = 0;
   paused = false;
-
   document.getElementById('practice-title-bar').textContent = practice.name;
   buildCycleDots();
   buildMusicPanel();
-
   showScreen('breath-screen');
   closeMusicPanel();
-
   nextPhase();
 }
 
@@ -895,37 +772,27 @@ function buildCycleDots() {
 }
 
 function nextPhase() {
-  if (cyclesDone >= currentPractice.cycles) {
-    finishPractice(); return;
-  }
+  if (cyclesDone >= currentPractice.cycles) { finishPractice(); return; }
   const phase = currentPractice.phases[phaseIdx];
   phaseTime = phase.dur;
-
   document.getElementById('phase-label').textContent = phase.label;
   document.getElementById('phase-desc').textContent = phase.hint;
   document.getElementById('phase-timer').textContent = phaseTime;
-
   updateCircle(phaseTime, phase.dur, phase.type);
   playTone(phase.type);
-
-  // Glow
   const glow = document.getElementById('circle-glow');
   glow.className = 'circle-glow' + (phase.type === 'in' ? ' inhale' : '');
-
   clearInterval(timer);
   const totalDur = phase.dur;
   let elapsed = 0;
-
   timer = setInterval(() => {
     if (paused) return;
     elapsed += 0.05;
     phaseTime = Math.max(0, phase.dur - elapsed);
     document.getElementById('phase-timer').textContent = Math.ceil(phaseTime);
     updateCircle(phaseTime, totalDur, phase.type);
-
     if (elapsed >= phase.dur) {
       clearInterval(timer);
-      // advance
       phaseIdx++;
       if (phaseIdx >= currentPractice.phases.length) {
         phaseIdx = 0;
@@ -941,13 +808,9 @@ function updateCircle(remaining, total, type) {
   const circ = 289.03;
   const prog = document.getElementById('circle-progress');
   let ratio;
-  if (type === 'in') {
-    ratio = 1 - remaining / total; // fills up
-  } else if (type === 'out') {
-    ratio = remaining / total;    // empties
-  } else {
-    ratio = 0.5;                  // hold — half
-  }
+  if (type === 'in') ratio = 1 - remaining / total;
+  else if (type === 'out') ratio = remaining / total;
+  else ratio = 0.5;
   prog.style.strokeDashoffset = circ - circ * ratio;
 }
 
@@ -955,13 +818,11 @@ function finishPractice() {
   clearInterval(timer);
   stopMusic();
   closeMusicPanel();
-
   document.getElementById('done-stat').innerHTML =
     `Практика: <span>${currentPractice.name}</span><br>Выполнено циклов: <span>${currentPractice.cycles}</span>`;
   showScreen('done-screen');
 }
 
-// Pause / resume
 document.getElementById('btn-pause').addEventListener('click', () => {
   paused = !paused;
   document.getElementById('btn-pause').textContent = paused ? 'Продолжить' : 'Пауза';
@@ -983,7 +844,6 @@ document.getElementById('btn-back').addEventListener('click', () => {
   showScreen('reg-screen');
 });
 
-// Done screen
 document.getElementById('btn-again').addEventListener('click', () => {
   startPractice(currentPractice);
 });
@@ -992,9 +852,6 @@ document.getElementById('btn-home').addEventListener('click', () => {
   showScreen('practice-screen');
 });
 
-// ═══════════════════════════════════════════
-//  AUDIO: TONES
-// ═══════════════════════════════════════════
 function playTone(type) {
   try {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1011,9 +868,6 @@ function playTone(type) {
   } catch(e) {}
 }
 
-// ═══════════════════════════════════════════
-//  MUSIC
-// ═══════════════════════════════════════════
 function buildMusicPanel() {
   const container = document.getElementById('music-tracks');
   container.innerHTML = '';
@@ -1022,11 +876,7 @@ function buildMusicPanel() {
     btn.className = 'music-track-btn' + (currentTrack === t.id ? ' active' : '');
     btn.textContent = t.name;
     btn.id = `track-${t.id}`;
-    if (t.file === null) {
-      btn.addEventListener('click', () => setTrack('none', null));
-    } else {
-      btn.addEventListener('click', () => setTrack(t.id, t.file));
-    }
+    btn.addEventListener('click', () => setTrack(t.id, t.file));
     container.appendChild(btn);
   });
 }
@@ -1035,7 +885,6 @@ function setTrack(id, file) {
   currentTrack = id;
   document.querySelectorAll('.music-track-btn').forEach(b => b.classList.remove('active'));
   document.getElementById(`track-${id}`)?.classList.add('active');
-
   musicAudio.pause();
   if (file) {
     musicAudio.src = file;
@@ -1064,7 +913,6 @@ function closeMusicPanel() {
   document.getElementById('btn-music').classList.remove('active');
 }
 
-// Close panel on tap outside
 document.getElementById('breath-screen').addEventListener('click', (e) => {
   if (musicPanelOpen && !document.getElementById('music-panel').contains(e.target)
       && e.target !== document.getElementById('btn-music')) {
@@ -1072,11 +920,7 @@ document.getElementById('breath-screen').addEventListener('click', (e) => {
   }
 });
 
-// ═══════════════════════════════════════════
-//  INIT
-// ═══════════════════════════════════════════
 if (loadUser()) {
-  // Pre-fill form
   document.getElementById('inp-name').value = user.name;
   document.getElementById('inp-age').value = user.age;
   document.querySelectorAll('.gender-tab').forEach(t => {
@@ -1087,8 +931,11 @@ if (loadUser()) {
   showScreen('practice-screen');
 }
 
-// Prevent pull-to-refresh on mobile
-document.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+document.addEventListener('touchmove', function(e) {
+  if (!e.target.closest('#practice-screen')) {
+    e.preventDefault();
+  }
+}, { passive: false });
 </script>
 </body>
 </html>
