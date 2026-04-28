@@ -1,644 +1,1094 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Правильное дыхание</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0f1e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Дыхание</title>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  <style>
-    body {
-      margin: 0;
-      background: black;
-      font-family: sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      overflow: hidden;
-    }
+  :root {
+    --bg: #050810;
+    --surface: rgba(255,255,255,0.04);
+    --border: rgba(255,255,255,0.08);
+    --text: #e8ecf4;
+    --text-dim: rgba(232,236,244,0.45);
+    --accent: #7eb8d4;
+    --accent2: #a8d5b5;
+    --glow: rgba(126,184,212,0.25);
+    --radius: 20px;
+  }
 
-    #bg-video {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      object-fit: cover;
-      z-index: -2;
-      filter: blur(3px);
-      opacity: 0.6;
-    }
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
 
-    body::before {
-      content: "";
-      position: fixed;
-      width: 100%; height: 100%;
-      background: rgba(15,27,45,0.7);
-      z-index: -1;
-    }
+  /* ── Video background ── */
+  #bg-video {
+    position: fixed; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0.18;
+    z-index: 0;
+    pointer-events: none;
+  }
 
-    /* ONBOARDING */
-    #onboarding {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 100;
-      background: rgba(10, 20, 35, 0.85);
-      backdrop-filter: blur(8px);
-    }
+  /* Gradient fallback / overlay */
+  #bg-gradient {
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 80%, rgba(30,60,100,0.6) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 80% 10%, rgba(20,80,70,0.4) 0%, transparent 55%),
+      linear-gradient(160deg, #050810 0%, #091522 50%, #060d0a 100%);
+    z-index: 0;
+    pointer-events: none;
+  }
 
-    #onboarding.hidden { display: none; }
+  /* ── Screens ── */
+  .screen {
+    position: fixed; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    z-index: 10;
+    padding: 32px 24px;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(16px);
+  }
 
-    .onboarding-card {
-      background: rgba(26, 58, 92, 0.6);
-      border: 1px solid rgba(74, 144, 217, 0.4);
-      border-radius: 24px;
-      padding: 40px 32px;
-      width: 100%;
-      max-width: 320px;
-      text-align: center;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.5);
-    }
+  /* ── Registration ── */
+  #reg-screen {
+    gap: 0;
+  }
 
-    .onboarding-card h2 {
-      color: #a8c5e8;
-      font-size: 22px;
-      font-weight: 400;
-      margin: 0 0 8px;
-    }
+  .reg-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.4rem, 8vw, 3.6rem);
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    text-align: center;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
 
-    .onboarding-card p {
-      color: #6a9cbf;
-      font-size: 14px;
-      margin: 0 0 28px;
-    }
+  .reg-subtitle {
+    font-size: 0.8rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-align: center;
+    margin-bottom: 48px;
+  }
 
-    .input-group {
-      margin-bottom: 16px;
-      text-align: left;
-    }
+  .form-group {
+    width: 100%;
+    max-width: 320px;
+    margin-bottom: 18px;
+  }
 
-    .input-group label {
-      display: block;
-      color: #6a9cbf;
-      font-size: 12px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-bottom: 6px;
-    }
+  .form-label {
+    display: block;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
 
-    .input-group input {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 12px 16px;
-      background: rgba(74, 144, 217, 0.1);
-      border: 1px solid rgba(74, 144, 217, 0.3);
-      border-radius: 12px;
-      color: #e0f0ff;
-      font-size: 16px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
+  .form-input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    color: var(--text);
+    font-family: 'Jost', sans-serif;
+    font-size: 1rem;
+    font-weight: 300;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    -webkit-appearance: none;
+  }
+  .form-input:focus {
+    border-color: rgba(126,184,212,0.5);
+    box-shadow: 0 0 0 3px rgba(126,184,212,0.08);
+  }
 
-    .input-group input:focus { border-color: #4a90d9; }
+  /* Gender tabs */
+  .gender-tabs {
+    display: flex; gap: 8px;
+  }
+  .gender-tab {
+    flex: 1;
+    padding: 13px 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text-dim);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 300;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-align: center;
+  }
+  .gender-tab.active {
+    background: rgba(126,184,212,0.12);
+    border-color: rgba(126,184,212,0.4);
+    color: var(--accent);
+  }
 
-    .onboarding-btn {
-      width: 100%;
-      margin-top: 8px;
-      background: #4a90d9;
-      color: white;
-      border: none;
-      padding: 14px;
-      border-radius: 16px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
-    }
+  .btn-primary {
+    width: 100%;
+    max-width: 320px;
+    margin-top: 28px;
+    padding: 16px;
+    background: linear-gradient(135deg, rgba(126,184,212,0.2), rgba(168,213,181,0.15));
+    border: 1px solid rgba(126,184,212,0.35);
+    border-radius: 14px;
+    color: var(--text);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .btn-primary:active {
+    transform: scale(0.97);
+    background: linear-gradient(135deg, rgba(126,184,212,0.3), rgba(168,213,181,0.22));
+  }
 
-    .onboarding-btn:hover { background: #5aa0e8; }
-    .onboarding-btn:active { transform: scale(0.98); }
+  /* ── Practice select ── */
+  #practice-screen {
+    justify-content: flex-start;
+    padding-top: 56px;
+    overflow-y: auto;
+    gap: 0;
+  }
 
-    /* MAIN */
-    .container {
-      text-align: center;
-      width: 100%;
-      max-width: 360px;
-      padding: 0 16px;
-      box-sizing: border-box;
-    }
+  .greet-block {
+    text-align: center;
+    margin-bottom: 28px;
+    width: 100%;
+  }
+  .greet-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.8rem, 6vw, 2.6rem);
+    font-weight: 300;
+    letter-spacing: 0.05em;
+  }
+  .greet-sub {
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
 
-    #greeting-block { margin-bottom: 14px; }
+  .section-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+    width: 100%;
+    max-width: 400px;
+  }
 
-    #greeting-name {
-      color: #e0f0ff;
-      font-size: 18px;
-      font-weight: 300;
-      margin: 0 0 6px;
-    }
+  .practice-list {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
 
-    #quote-block {
-      background: rgba(74, 144, 217, 0.1);
-      border-left: 3px solid #4a90d9;
-      border-radius: 0 8px 8px 0;
-      padding: 10px 14px;
-      text-align: left;
-      margin-bottom: 4px;
-    }
+  .practice-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: all 0.25s;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .practice-card:active { transform: scale(0.98); }
+  .practice-card.recommended {
+    border-color: rgba(126,184,212,0.3);
+    background: rgba(126,184,212,0.06);
+  }
+  .practice-card.recommended .card-icon { color: var(--accent); }
 
-    #quote-text {
-      color: #a8c5e8;
-      font-size: 13px;
-      font-style: italic;
-      line-height: 1.5;
-      margin: 0 0 4px;
-    }
+  .card-icon {
+    font-size: 1.4rem;
+    min-width: 32px;
+    text-align: center;
+  }
+  .card-info { flex: 1; }
+  .card-name {
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+  .card-meta {
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+  }
+  .card-badge {
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(126,184,212,0.12);
+    border-radius: 20px;
+    padding: 3px 9px;
+    white-space: nowrap;
+  }
 
-    #quote-tag {
-      color: #4a90d9;
-      font-size: 11px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
+  /* ── Breathing screen ── */
+  #breath-screen {
+    gap: 0;
+  }
 
-    #change-quote-btn {
-      background: none;
-      border: none;
-      color: #4a6a8a;
-      font-size: 11px;
-      cursor: pointer;
-      padding: 2px 0;
-      margin-bottom: 10px;
-      text-decoration: underline;
-      transition: color 0.2s;
-    }
-    #change-quote-btn:hover { color: #a8c5e8; }
+  .top-bar {
+    position: fixed; top: 0; left: 0; right: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 20px;
+    z-index: 20;
+  }
+  .btn-icon {
+    width: 40px; height: 40px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    color: var(--text-dim);
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .btn-icon:active { transform: scale(0.9); }
+  .btn-icon.active { color: var(--accent); border-color: rgba(126,184,212,0.4); }
 
-    h1 {
-      color: #a8c5e8;
-      font-size: 20px;
-      margin: 0 0 12px;
-      font-weight: 400;
-    }
+  .practice-title-bar {
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
 
-    .mode-buttons {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 20px;
-    }
+  /* Breathing circle */
+  .circle-wrap {
+    position: relative;
+    width: min(280px, 72vw);
+    height: min(280px, 72vw);
+    margin: 0 auto 32px;
+  }
 
-    .mode-buttons button {
-      flex: 1;
-      padding: 10px;
-      border-radius: 20px;
-      border: 1px solid #4a90d9;
-      background: transparent;
-      color: #a8c5e8;
-      cursor: pointer;
-      font-size: 13px;
-      transition: 0.3s;
-    }
+  .circle-outer {
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    animation: pulse-ring 4s ease-in-out infinite;
+  }
 
-    .mode-buttons button.active {
-      background: #4a90d9;
-      color: white;
-    }
+  @keyframes pulse-ring {
+    0%, 100% { transform: scale(1); opacity: 0.3; }
+    50% { transform: scale(1.06); opacity: 0.06; }
+  }
 
-    .circle {
-      width: 200px; height: 200px;
-      border-radius: 50%;
-      background: #1a3a5c;
-      border: 3px solid #4a90d9;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 0 auto 16px;
-      transition: transform 4s ease-in-out;
-    }
+  .circle-svg {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    transform: rotate(-90deg);
+  }
+  .circle-track {
+    fill: none;
+    stroke: var(--border);
+    stroke-width: 2;
+  }
+  .circle-progress {
+    fill: none;
+    stroke: url(#circleGrad);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.1s linear;
+  }
 
-    .circle-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+  .circle-inner {
+    position: absolute;
+    inset: 12px;
+    border-radius: 50%;
+    background: radial-gradient(circle at center, rgba(126,184,212,0.08) 0%, transparent 70%);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    transition: transform 0.5s ease;
+  }
 
-    .countdown {
-      color: white;
-      font-size: 56px;
-      font-weight: 200;
-      line-height: 1;
-    }
+  .phase-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.4rem, 5vw, 2rem);
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    color: var(--text);
+    text-align: center;
+  }
+  .phase-timer {
+    font-size: 2.6rem;
+    font-weight: 200;
+    color: var(--accent);
+    line-height: 1;
+    margin-top: 4px;
+    font-variant-numeric: tabular-nums;
+  }
 
-    .phase-text {
-      color: #a8c5e8;
-      font-size: 15px;
-      margin-top: 6px;
-    }
+  /* Glow ring — animated separately */
+  .circle-glow {
+    position: absolute; inset: -8px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 0 var(--glow);
+    transition: box-shadow 0.5s ease;
+    pointer-events: none;
+  }
+  .circle-glow.inhale { box-shadow: 0 0 40px 12px var(--glow); }
 
-    .progress-wrap {
-      width: 100%; height: 6px;
-      background: #1a3a5c;
-      border-radius: 3px;
-      margin-bottom: 16px;
-      overflow: hidden;
-    }
+  /* Phase description */
+  .phase-desc {
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-align: center;
+    min-height: 20px;
+    margin-bottom: 32px;
+  }
 
-    .progress-bar {
-      height: 100%; width: 0%;
-      border-radius: 3px;
-      background: #4a90d9;
-      transition: background 0.4s;
-    }
+  /* Cycles */
+  .cycles-wrap {
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 36px;
+  }
+  .cycles-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .cycles-dots {
+    display: flex; gap: 6px;
+  }
+  .cycle-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    transition: all 0.3s;
+  }
+  .cycle-dot.done {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 8px var(--glow);
+  }
 
-    .cycle-counter {
-      color: #a8c5e8;
-      font-size: 18px;
-      font-weight: 300;
-      letter-spacing: 0.1em;
-      margin-bottom: 20px;
-    }
+  /* Controls */
+  .controls {
+    display: flex; gap: 16px; align-items: center;
+  }
+  .btn-control {
+    padding: 14px 36px;
+    background: linear-gradient(135deg, rgba(126,184,212,0.18), rgba(168,213,181,0.12));
+    border: 1px solid rgba(126,184,212,0.3);
+    border-radius: 50px;
+    color: var(--text);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .btn-control:active { transform: scale(0.96); }
+  .btn-control.stop {
+    padding: 14px 24px;
+    background: rgba(255,255,255,0.04);
+    border-color: var(--border);
+    color: var(--text-dim);
+  }
 
-    .cycle-counter span {
-      color: #4a90d9;
-      font-size: 28px;
-      font-weight: 400;
-    }
+  /* ── Music panel ── */
+  .music-panel {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: rgba(5,8,16,0.85);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    padding: 16px 20px 28px;
+    z-index: 30;
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .music-panel.open { transform: translateY(0); }
 
-    .start-btn {
-      background: #4a90d9;
-      color: white;
-      border: none;
-      padding: 14px 40px;
-      border-radius: 30px;
-      font-size: 17px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
+  .music-panel-title {
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+  .music-tracks {
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+  .music-track-btn {
+    padding: 9px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    color: var(--text-dim);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 300;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .music-track-btn.active {
+    background: rgba(126,184,212,0.12);
+    border-color: rgba(126,184,212,0.4);
+    color: var(--accent);
+  }
+  .music-track-btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
 
-    .start-btn:hover { background: #5aa0e8; }
+  /* ── Completion screen ── */
+  #done-screen {
+    gap: 0;
+  }
+  .done-icon {
+    font-size: 3rem;
+    margin-bottom: 16px;
+    animation: float 3s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  .done-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 7vw, 3rem);
+    font-weight: 300;
+    letter-spacing: 0.06em;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .done-sub {
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .done-stat {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-bottom: 40px;
+    text-align: center;
+  }
+  .done-stat span { color: var(--accent); }
 
-    #music-fab {
-      position: fixed;
-      bottom: 20px; right: 20px;
-      width: 60px; height: 60px;
-      border-radius: 50%;
-      background: #4a90d9;
-      color: white;
-      font-size: 24px;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-      z-index: 10;
-    }
+  .btn-row {
+    display: flex; flex-direction: column; gap: 12px;
+    width: 100%; max-width: 320px;
+  }
 
-    #music-fab.off { background: #555; }
+  /* Scrollbar */
+  #practice-screen::-webkit-scrollbar { width: 3px; }
+  #practice-screen::-webkit-scrollbar-track { background: transparent; }
+  #practice-screen::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-    #profile-btn {
-      position: fixed;
-      bottom: 20px; left: 20px;
-      width: 60px; height: 60px;
-      border-radius: 50%;
-      background: rgba(74,144,217,0.2);
-      border: 1px solid rgba(74,144,217,0.4);
-      color: #a8c5e8;
-      font-size: 22px;
-      cursor: pointer;
-      z-index: 10;
-      transition: background 0.2s;
-    }
-    #profile-btn:hover { background: rgba(74,144,217,0.35); }
-  </style>
+  /* Noise overlay */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.4;
+    pointer-events: none;
+    z-index: 1;
+  }
+</style>
 </head>
-
 <body>
 
-  <video autoplay muted loop id="bg-video">
-    <source src="bg.mp4" type="video/mp4">
-  </video>
+<!-- Background -->
+<video id="bg-video" autoplay muted loop playsinline src="bg.mp4"></video>
+<div id="bg-gradient"></div>
 
-  <div id="onboarding">
-    <div class="onboarding-card">
-      <h2>Добро пожаловать 🌿</h2>
-      <p>Расскажи немного о себе, чтобы мы могли персонализировать опыт</p>
-      <div class="input-group">
-        <label>Твоё имя</label>
-        <input type="text" id="input-name" placeholder="Например, Алия" maxlength="30">
-      </div>
-      <div class="input-group">
-        <label>Возраст</label>
-        <input type="number" id="input-age" placeholder="Например, 28" min="5" max="120">
-      </div>
-      <button class="onboarding-btn" id="save-profile-btn">Начать путь →</button>
+<!-- ══════════════════════════════════════════
+     SCREEN 1: Registration
+══════════════════════════════════════════ -->
+<div class="screen" id="reg-screen">
+  <div class="reg-title">Дыхание</div>
+  <div class="reg-subtitle">Медитативные практики</div>
+
+  <div class="form-group">
+    <label class="form-label">Ваше имя</label>
+    <input class="form-input" id="inp-name" type="text" placeholder="Введите имя" maxlength="30" autocomplete="off">
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Пол</label>
+    <div class="gender-tabs">
+      <div class="gender-tab active" data-gender="м">♂ Мужской</div>
+      <div class="gender-tab" data-gender="ж">♀ Женский</div>
     </div>
   </div>
 
-  <div class="container">
-    <div id="greeting-block">
-      <p id="greeting-name"></p>
-      <div id="quote-block">
-        <p id="quote-text"></p>
-        <span id="quote-tag"></span>
-      </div>
-      <button id="change-quote-btn">другая цитата ↻</button>
-    </div>
-
-    <h1>Правильное дыхание</h1>
-
-    <div class="mode-buttons">
-      <button data-mode="478">😴 4-7-8</button>
-      <button data-mode="box" class="active">🧘 Box</button>
-      <button data-mode="classic">🌿 Классика</button>
-    </div>
-
-    <div class="circle" id="circle">
-      <div class="circle-content">
-        <span class="countdown" id="countdown">4</span>
-        <span class="phase-text" id="phase-text">Вдох</span>
-      </div>
-    </div>
-
-    <div class="progress-wrap">
-      <div class="progress-bar" id="progress-bar"></div>
-    </div>
-
-    <div class="cycle-counter">
-      Цикл <span id="cycle-num">0</span>
-    </div>
-
-    <button class="start-btn" id="start-btn">Начать</button>
+  <div class="form-group">
+    <label class="form-label">Возраст</label>
+    <input class="form-input" id="inp-age" type="number" placeholder="Лет" min="5" max="100">
   </div>
 
-  <button id="music-fab" class="off">🎧</button>
-  <button id="profile-btn" title="Изменить профиль">👤</button>
+  <button class="btn-primary" id="btn-start">Начать →</button>
+</div>
 
-  <script>
-    function getContent(age) {
-      const content = [];
-      if (age < 18) {
-        content.push({ text: `Ты в самом начале пути. Каждый день — это новая страница твоей истории.`, tag: '✨ мотивация' });
-        content.push({ text: 'В твоём возрасте мозг особенно пластичен. Дыхательные практики улучшают концентрацию и помогают учиться быстрее.', tag: '🧠 факт о мозге' });
-        content.push({ text: 'Глубокое дыхание снижает кортизол — гормон стресса. Всего 5 минут в день меняют твоё состояние.', tag: '🫁 польза дыхания' });
-        content.push({ text: 'Твоё тело сейчас растёт и развивается. Кислород — главное топливо этого процесса.', tag: '💪 здоровье' });
-      } else if (age < 25) {
-        content.push({ text: `Твои 20-е — время строить фундамент. То, что ты делаешь сейчас, определяет следующие 20 лет.`, tag: '🚀 карьера' });
-        content.push({ text: 'Осознанное дыхание активирует префронтальную кору мозга — зону принятия решений. Особенно важно перед важными встречами.', tag: '🧠 наука' });
-        content.push({ text: 'В 20 лет лёгкие работают на максимуме. Тренируй их сейчас — они будут служить тебе десятилетия.', tag: '🫁 факт' });
-        content.push({ text: 'Молодой организм восстанавливается быстро. Но хороший сон и дыхание ускоряют восстановление в 2 раза.', tag: '⚡ энергия' });
-      } else if (age < 35) {
-        content.push({ text: `Ты в расцвете сил. Баланс между амбициями и спокойствием — твоя суперсила.`, tag: '⚖️ баланс' });
-        content.push({ text: 'Техника Box breathing используется спецназом США для управления стрессом в экстремальных ситуациях.', tag: '🎖️ интересный факт' });
-        content.push({ text: 'В 30 лет метаболизм начинает замедляться. Дыхательные практики поддерживают обмен веществ на высоком уровне.', tag: '🔥 метаболизм' });
-        content.push({ text: 'Хронический стресс сокращает теломеры — концы хромосом, отвечающие за молодость. Медитация и дыхание замедляют этот процесс.', tag: '🧬 долголетие' });
-      } else if (age < 50) {
-        content.push({ text: `40-е — это не середина пути, это второй старт. Мудрость и энергия встречаются здесь.`, tag: '🌟 мудрость' });
-        content.push({ text: 'После 40 лёгкие начинают терять 1% объёма в год. Регулярные дыхательные упражнения замедляют этот процесс.', tag: '🫁 важно знать' });
-        content.push({ text: 'Глубокое дыхание стимулирует блуждающий нерв — главный регулятор спокойствия и пищеварения.', tag: '🧘 польза' });
-        content.push({ text: 'Люди, практикующие осознанное дыхание, имеют более низкое давление и меньший риск сердечно-сосудистых заболеваний.', tag: '❤️ сердце' });
-      } else if (age < 65) {
-        content.push({ text: `Твой опыт — это богатство. Забота о теле в этом возрасте — самая умная инвестиция.`, tag: '💎 мудрость' });
-        content.push({ text: 'После 50 дыхание становится более поверхностным. Техника 4-7-8 помогает полностью раскрыть лёгкие и насытить кровь кислородом.', tag: '🫁 для тебя' });
-        content.push({ text: 'Исследования показывают: люди, медитирующие с 50 лет, имеют мозг моложе на 7 лет по сравнению со сверстниками.', tag: '🧠 наука' });
-        content.push({ text: 'Спокойное дыхание снижает воспалительные процессы в организме — одну из главных причин старения.', tag: '🌿 здоровье' });
-      } else {
-        content.push({ text: `Мудрость приходит к тем, кто умеет замедляться. Каждый вдох — это подарок.`, tag: '🙏 благодарность' });
-        content.push({ text: 'После 65 лет дыхательные практики особенно важны: они поддерживают гибкость диафрагмы и насыщение крови кислородом.', tag: '🫁 здоровье' });
-        content.push({ text: 'Глубокое дыхание стимулирует лимфатическую систему — главный механизм очищения организма.', tag: '💧 очищение' });
-        content.push({ text: 'Японские долгожители из Окинавы практикуют осознанное дыхание как часть ежедневного ритуала.', tag: '🌏 долголетие' });
+
+<!-- ══════════════════════════════════════════
+     SCREEN 2: Practice selection
+══════════════════════════════════════════ -->
+<div class="screen hidden" id="practice-screen">
+  <div class="greet-block">
+    <div class="greet-name" id="greet-name">Привет</div>
+    <div class="greet-sub">Выберите практику</div>
+  </div>
+
+  <div class="section-label">Рекомендовано для вас</div>
+  <div class="practice-list" id="practice-list"></div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     SCREEN 3: Breathing
+══════════════════════════════════════════ -->
+<div class="screen hidden" id="breath-screen">
+
+  <!-- Top bar -->
+  <div class="top-bar">
+    <button class="btn-icon" id="btn-back" title="Назад">←</button>
+    <div class="practice-title-bar" id="practice-title-bar"></div>
+    <button class="btn-icon" id="btn-music" title="Музыка">♪</button>
+  </div>
+
+  <!-- Circle -->
+  <div class="circle-wrap">
+    <div class="circle-outer"></div>
+    <div class="circle-glow" id="circle-glow"></div>
+    <svg class="circle-svg" viewBox="0 0 100 100">
+      <defs>
+        <linearGradient id="circleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#7eb8d4"/>
+          <stop offset="100%" stop-color="#a8d5b5"/>
+        </linearGradient>
+      </defs>
+      <circle class="circle-track" cx="50" cy="50" r="46"/>
+      <circle class="circle-progress" id="circle-progress" cx="50" cy="50" r="46"
+        stroke-dasharray="289.03"
+        stroke-dashoffset="289.03"/>
+    </svg>
+    <div class="circle-inner" id="circle-inner">
+      <div class="phase-label" id="phase-label">Вдох</div>
+      <div class="phase-timer" id="phase-timer">—</div>
+    </div>
+  </div>
+
+  <div class="phase-desc" id="phase-desc"></div>
+
+  <!-- Cycles -->
+  <div class="cycles-wrap">
+    <div class="cycles-label">Циклы</div>
+    <div class="cycles-dots" id="cycles-dots"></div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <button class="btn-control stop" id="btn-stop">✕</button>
+    <button class="btn-control" id="btn-pause">Пауза</button>
+  </div>
+
+  <!-- Music panel -->
+  <div class="music-panel" id="music-panel">
+    <div class="music-panel-title">Фоновая музыка</div>
+    <div class="music-tracks" id="music-tracks"></div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     SCREEN 4: Done
+══════════════════════════════════════════ -->
+<div class="screen hidden" id="done-screen">
+  <div class="done-icon">✦</div>
+  <div class="done-title">Практика завершена</div>
+  <div class="done-sub">Хорошая работа</div>
+  <div class="done-stat" id="done-stat"></div>
+  <div class="btn-row">
+    <button class="btn-primary" id="btn-again">Ещё раз</button>
+    <button class="btn-primary" style="background:var(--surface);border-color:var(--border)" id="btn-home">К практикам</button>
+  </div>
+</div>
+
+
+<script>
+// ═══════════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════════
+const PRACTICES = [
+  {
+    id: 'kids',
+    icon: '🌸',
+    name: 'Детское спокойствие',
+    desc: 'Мягкое дыхание для расслабления',
+    age: [5, 12],
+    cycles: 5,
+    phases: [
+      { label: 'Вдох',   hint: 'Медленно вдохни через нос', dur: 3, type: 'in'  },
+      { label: 'Выдох',  hint: 'Плавно выдохни через рот',  dur: 5, type: 'out' }
+    ]
+  },
+  {
+    id: 'box',
+    icon: '⬜',
+    name: 'Квадратное дыхание',
+    desc: '4-4-4-4 · Армейская техника фокуса',
+    age: [8, 100],
+    cycles: 6,
+    phases: [
+      { label: 'Вдох',    hint: 'Вдох через нос',   dur: 4, type: 'in'   },
+      { label: 'Задержка',hint: 'Задержи дыхание',  dur: 4, type: 'hold' },
+      { label: 'Выдох',   hint: 'Выдох через рот',  dur: 4, type: 'out'  },
+      { label: 'Пауза',   hint: 'Отдых',            dur: 4, type: 'hold' }
+    ]
+  },
+  {
+    id: '478',
+    icon: '🌙',
+    name: '4-7-8 Расслабление',
+    desc: 'Снятие тревоги · Лучший сон',
+    age: [12, 100],
+    cycles: 4,
+    phases: [
+      { label: 'Вдох',    hint: 'Вдох через нос',       dur: 4, type: 'in'   },
+      { label: 'Задержка',hint: 'Удержи дыхание',       dur: 7, type: 'hold' },
+      { label: 'Выдох',   hint: 'Выдох через рот (8с)', dur: 8, type: 'out'  }
+    ]
+  },
+  {
+    id: 'teen',
+    icon: '⚡',
+    name: 'Баланс для подростков',
+    desc: 'Стресс перед экзаменами · Концентрация',
+    age: [13, 20],
+    cycles: 6,
+    phases: [
+      { label: 'Вдох',   hint: 'Глубокий вдох',   dur: 4, type: 'in'   },
+      { label: 'Выдох',  hint: 'Долгий выдох',    dur: 6, type: 'out'  }
+    ]
+  },
+  {
+    id: 'coherent',
+    icon: '〇',
+    name: 'Когерентное дыхание',
+    desc: '5 вдохов/мин · Сердечный ритм',
+    age: [14, 100],
+    cycles: 5,
+    phases: [
+      { label: 'Вдох',  hint: 'Ровный вдох',   dur: 6, type: 'in'  },
+      { label: 'Выдох', hint: 'Ровный выдох',  dur: 6, type: 'out' }
+    ]
+  },
+  {
+    id: 'wimhof',
+    icon: '🔥',
+    name: 'Активация (Вим Хоф)',
+    desc: 'Энергия · Иммунитет · 18–65 лет',
+    age: [18, 65],
+    cycles: 3,
+    phases: [
+      { label: 'Вдох',    hint: 'Мощный вдох',      dur: 2, type: 'in'   },
+      { label: 'Выдох',   hint: 'Лёгкий выдох',     dur: 2, type: 'out'  },
+      { label: 'Задержка',hint: 'Удержи (финал)',    dur: 15, type: 'hold' }
+    ]
+  },
+  {
+    id: 'senior',
+    icon: '🌿',
+    name: 'Мягкое восстановление',
+    desc: 'Давление · Сердечный ритм · 55+',
+    age: [55, 100],
+    cycles: 6,
+    phases: [
+      { label: 'Вдох',  hint: 'Нежный вдох',  dur: 4, type: 'in'  },
+      { label: 'Пауза', hint: 'Мягкая пауза', dur: 2, type: 'hold'},
+      { label: 'Выдох', hint: 'Долгий выдох', dur: 6, type: 'out' }
+    ]
+  }
+];
+
+const TRACKS = [
+  { id: 'none',    name: 'Без музыки',  file: null },
+  { id: 'flying',  name: 'Flying',      file: 'music/flying.mp3' }
+];
+
+// Audio freqs for phase cues (Web Audio API)
+const TONE_FREQ = { in: 528, hold: 396, out: 285 };
+
+// ═══════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════
+let user = { name: '', gender: 'м', age: 25 };
+let selectedGender = 'м';
+let currentPractice = null;
+let cyclesDone = 0;
+let phaseIdx = 0;
+let phaseTime = 0;
+let timer = null;
+let paused = false;
+let musicAudio = new Audio();
+musicAudio.loop = true;
+let currentTrack = 'none';
+let audioCtx = null;
+let musicPanelOpen = false;
+
+// ═══════════════════════════════════════════
+//  PERSISTENCE
+// ═══════════════════════════════════════════
+function saveUser() {
+  try { localStorage.setItem('breath_user', JSON.stringify(user)); } catch(e) {}
+}
+function loadUser() {
+  try {
+    const s = localStorage.getItem('breath_user');
+    if (s) { user = JSON.parse(s); return true; }
+  } catch(e) {}
+  return false;
+}
+
+// ═══════════════════════════════════════════
+//  SCREENS
+// ═══════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+
+// ═══════════════════════════════════════════
+//  REGISTRATION
+// ═══════════════════════════════════════════
+document.querySelectorAll('.gender-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.gender-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    selectedGender = tab.dataset.gender;
+  });
+});
+
+document.getElementById('btn-start').addEventListener('click', () => {
+  const name = document.getElementById('inp-name').value.trim();
+  const age = parseInt(document.getElementById('inp-age').value);
+  if (!name) { shake(document.getElementById('inp-name')); return; }
+  if (!age || age < 5 || age > 100) { shake(document.getElementById('inp-age')); return; }
+  user = { name, gender: selectedGender, age };
+  saveUser();
+  initPracticeScreen();
+  showScreen('practice-screen');
+});
+
+function shake(el) {
+  el.style.animation = 'none';
+  el.style.borderColor = 'rgba(212,126,126,0.6)';
+  setTimeout(() => { el.style.borderColor = ''; }, 1200);
+}
+
+// ═══════════════════════════════════════════
+//  PRACTICE SELECTION
+// ═══════════════════════════════════════════
+function initPracticeScreen() {
+  document.getElementById('greet-name').textContent = user.name;
+
+  const list = document.getElementById('practice-list');
+  list.innerHTML = '';
+
+  // Sort: recommended first
+  const sorted = [...PRACTICES].sort((a, b) => {
+    const aRec = user.age >= a.age[0] && user.age <= a.age[1];
+    const bRec = user.age >= b.age[0] && user.age <= b.age[1];
+    return bRec - aRec;
+  });
+
+  sorted.forEach(p => {
+    const rec = user.age >= p.age[0] && user.age <= p.age[1];
+    const el = document.createElement('div');
+    el.className = 'practice-card' + (rec ? ' recommended' : '');
+    el.innerHTML = `
+      <div class="card-icon">${p.icon}</div>
+      <div class="card-info">
+        <div class="card-name">${p.name}</div>
+        <div class="card-meta">${p.desc} · ${p.cycles} циклов</div>
+      </div>
+      ${rec ? '<div class="card-badge">для вас</div>' : ''}
+    `;
+    el.addEventListener('click', () => startPractice(p));
+    list.appendChild(el);
+  });
+}
+
+// ═══════════════════════════════════════════
+//  BREATHING ENGINE
+// ═══════════════════════════════════════════
+function startPractice(practice) {
+  currentPractice = practice;
+  cyclesDone = 0;
+  phaseIdx = 0;
+  paused = false;
+
+  document.getElementById('practice-title-bar').textContent = practice.name;
+  buildCycleDots();
+  buildMusicPanel();
+
+  showScreen('breath-screen');
+  closeMusicPanel();
+
+  nextPhase();
+}
+
+function buildCycleDots() {
+  const dots = document.getElementById('cycles-dots');
+  dots.innerHTML = '';
+  for (let i = 0; i < currentPractice.cycles; i++) {
+    const d = document.createElement('div');
+    d.className = 'cycle-dot';
+    d.id = `dot-${i}`;
+    dots.appendChild(d);
+  }
+}
+
+function nextPhase() {
+  if (cyclesDone >= currentPractice.cycles) {
+    finishPractice(); return;
+  }
+  const phase = currentPractice.phases[phaseIdx];
+  phaseTime = phase.dur;
+
+  document.getElementById('phase-label').textContent = phase.label;
+  document.getElementById('phase-desc').textContent = phase.hint;
+  document.getElementById('phase-timer').textContent = phaseTime;
+
+  updateCircle(phaseTime, phase.dur, phase.type);
+  playTone(phase.type);
+
+  // Glow
+  const glow = document.getElementById('circle-glow');
+  glow.className = 'circle-glow' + (phase.type === 'in' ? ' inhale' : '');
+
+  clearInterval(timer);
+  const totalDur = phase.dur;
+  let elapsed = 0;
+
+  timer = setInterval(() => {
+    if (paused) return;
+    elapsed += 0.05;
+    phaseTime = Math.max(0, phase.dur - elapsed);
+    document.getElementById('phase-timer').textContent = Math.ceil(phaseTime);
+    updateCircle(phaseTime, totalDur, phase.type);
+
+    if (elapsed >= phase.dur) {
+      clearInterval(timer);
+      // advance
+      phaseIdx++;
+      if (phaseIdx >= currentPractice.phases.length) {
+        phaseIdx = 0;
+        cyclesDone++;
+        document.getElementById(`dot-${cyclesDone - 1}`)?.classList.add('done');
       }
-      return content;
+      nextPhase();
     }
+  }, 50);
+}
 
-    let userName = '', userAge = 0, currentQuoteIndex = 0, quotePool = [];
+function updateCircle(remaining, total, type) {
+  const circ = 289.03;
+  const prog = document.getElementById('circle-progress');
+  let ratio;
+  if (type === 'in') {
+    ratio = 1 - remaining / total; // fills up
+  } else if (type === 'out') {
+    ratio = remaining / total;    // empties
+  } else {
+    ratio = 0.5;                  // hold — half
+  }
+  prog.style.strokeDashoffset = circ - circ * ratio;
+}
 
-    function loadProfile() {
-      userName = localStorage.getItem('bp_name') || '';
-      userAge = parseInt(localStorage.getItem('bp_age')) || 0;
-      return userName && userAge;
+function finishPractice() {
+  clearInterval(timer);
+  stopMusic();
+  closeMusicPanel();
+
+  document.getElementById('done-stat').innerHTML =
+    `Практика: <span>${currentPractice.name}</span><br>Выполнено циклов: <span>${currentPractice.cycles}</span>`;
+  showScreen('done-screen');
+}
+
+// Pause / resume
+document.getElementById('btn-pause').addEventListener('click', () => {
+  paused = !paused;
+  document.getElementById('btn-pause').textContent = paused ? 'Продолжить' : 'Пауза';
+  document.getElementById('btn-pause').style.borderColor = paused ? 'rgba(126,184,212,0.5)' : '';
+});
+
+document.getElementById('btn-stop').addEventListener('click', () => {
+  clearInterval(timer);
+  stopMusic();
+  closeMusicPanel();
+  initPracticeScreen();
+  showScreen('practice-screen');
+});
+
+document.getElementById('btn-back').addEventListener('click', () => {
+  clearInterval(timer);
+  stopMusic();
+  closeMusicPanel();
+  showScreen('reg-screen');
+});
+
+// Done screen
+document.getElementById('btn-again').addEventListener('click', () => {
+  startPractice(currentPractice);
+});
+document.getElementById('btn-home').addEventListener('click', () => {
+  initPracticeScreen();
+  showScreen('practice-screen');
+});
+
+// ═══════════════════════════════════════════
+//  AUDIO: TONES
+// ═══════════════════════════════════════════
+function playTone(type) {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.frequency.value = TONE_FREQ[type] || 396;
+    osc.type = 'sine';
+    gain.gain.setValueAtTime(0, audioCtx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.12, audioCtx.currentTime + 0.08);
+    gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.5);
+    osc.start(audioCtx.currentTime);
+    osc.stop(audioCtx.currentTime + 0.6);
+  } catch(e) {}
+}
+
+// ═══════════════════════════════════════════
+//  MUSIC
+// ═══════════════════════════════════════════
+function buildMusicPanel() {
+  const container = document.getElementById('music-tracks');
+  container.innerHTML = '';
+  TRACKS.forEach(t => {
+    const btn = document.createElement('button');
+    btn.className = 'music-track-btn' + (currentTrack === t.id ? ' active' : '');
+    btn.textContent = t.name;
+    btn.id = `track-${t.id}`;
+    if (t.file === null) {
+      btn.addEventListener('click', () => setTrack('none', null));
+    } else {
+      btn.addEventListener('click', () => setTrack(t.id, t.file));
     }
+    container.appendChild(btn);
+  });
+}
 
-    function saveProfile(name, age) {
-      localStorage.setItem('bp_name', name);
-      localStorage.setItem('bp_age', age);
-      userName = name;
-      userAge = age;
-    }
+function setTrack(id, file) {
+  currentTrack = id;
+  document.querySelectorAll('.music-track-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`track-${id}`)?.classList.add('active');
 
-    function showApp() {
-      document.getElementById('onboarding').classList.add('hidden');
-      quotePool = getContent(userAge);
-      currentQuoteIndex = Math.floor(Math.random() * quotePool.length);
-      renderGreeting();
-    }
+  musicAudio.pause();
+  if (file) {
+    musicAudio.src = file;
+    musicAudio.volume = 0.4;
+    musicAudio.play().catch(() => {});
+  } else {
+    musicAudio.src = '';
+  }
+}
 
-    function renderGreeting() {
-      document.getElementById('greeting-name').textContent = `Привет, ${userName} 👋`;
-      const q = quotePool[currentQuoteIndex];
-      document.getElementById('quote-text').textContent = q.text;
-      document.getElementById('quote-tag').textContent = q.tag;
-    }
+function stopMusic() {
+  musicAudio.pause();
+  musicAudio.src = '';
+  currentTrack = 'none';
+}
 
-    document.getElementById('change-quote-btn').addEventListener('click', () => {
-      currentQuoteIndex = (currentQuoteIndex + 1) % quotePool.length;
-      renderGreeting();
-    });
+document.getElementById('btn-music').addEventListener('click', () => {
+  musicPanelOpen = !musicPanelOpen;
+  document.getElementById('music-panel').classList.toggle('open', musicPanelOpen);
+  document.getElementById('btn-music').classList.toggle('active', musicPanelOpen);
+});
 
-    document.getElementById('profile-btn').addEventListener('click', () => {
-      document.getElementById('onboarding').classList.remove('hidden');
-      document.getElementById('input-name').value = userName;
-      document.getElementById('input-age').value = userAge;
-    });
+function closeMusicPanel() {
+  musicPanelOpen = false;
+  document.getElementById('music-panel').classList.remove('open');
+  document.getElementById('btn-music').classList.remove('active');
+}
 
-    document.getElementById('save-profile-btn').addEventListener('click', () => {
-      const name = document.getElementById('input-name').value.trim();
-      const age = parseInt(document.getElementById('input-age').value);
-      if (!name) { document.getElementById('input-name').style.borderColor = '#e05a5a'; return; }
-      if (!age || age < 5 || age > 120) { document.getElementById('input-age').style.borderColor = '#e05a5a'; return; }
-      saveProfile(name, age);
-      showApp();
-    });
+// Close panel on tap outside
+document.getElementById('breath-screen').addEventListener('click', (e) => {
+  if (musicPanelOpen && !document.getElementById('music-panel').contains(e.target)
+      && e.target !== document.getElementById('btn-music')) {
+    closeMusicPanel();
+  }
+});
 
-    document.getElementById('input-name').addEventListener('keydown', e => {
-      if (e.key === 'Enter') document.getElementById('input-age').focus();
-    });
-    document.getElementById('input-age').addEventListener('keydown', e => {
-      if (e.key === 'Enter') document.getElementById('save-profile-btn').click();
-    });
+// ═══════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════
+if (loadUser()) {
+  // Pre-fill form
+  document.getElementById('inp-name').value = user.name;
+  document.getElementById('inp-age').value = user.age;
+  document.querySelectorAll('.gender-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.gender === user.gender);
+  });
+  selectedGender = user.gender;
+  initPracticeScreen();
+  showScreen('practice-screen');
+}
 
-    if (loadProfile()) showApp();
-
-    // ===== ДЫХАНИЕ =====
-    const circle = document.getElementById('circle');
-    const phaseText = document.getElementById('phase-text');
-    const countdown = document.getElementById('countdown');
-    const btn = document.getElementById('start-btn');
-    const cycleNum = document.getElementById('cycle-num');
-    const progressBar = document.getElementById('progress-bar');
-    const musicFab = document.getElementById('music-fab');
-
-    let currentMode = 'box';
-    const modeButtons = document.querySelectorAll('.mode-buttons button');
-
-    modeButtons.forEach(b => {
-      b.addEventListener('click', () => {
-        currentMode = b.dataset.mode;
-        modeButtons.forEach(x => x.classList.remove('active'));
-        b.classList.add('active');
-        if (timer) reset();
-      });
-    });
-
-    const techniques = {
-      '478': [
-        { name: 'Вдох', duration: 4 },
-        { name: 'Задержка', duration: 7 },
-        { name: 'Выдох', duration: 8 },
-      ],
-      'box': [
-        { name: 'Вдох', duration: 4 },
-        { name: 'Задержка', duration: 4 },
-        { name: 'Выдох', duration: 4 },
-        { name: 'Пауза', duration: 4 },
-      ],
-      'classic': [
-        { name: 'Вдох', duration: 4 },
-        { name: 'Задержка', duration: 4 },
-        { name: 'Выдох', duration: 6 },
-      ],
-    };
-
-    function getPhases() { return techniques[currentMode]; }
-
-    let audioCtx = null;
-    function getAudioCtx() {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      return audioCtx;
-    }
-
-    function playTone(freq, duration, type = 'sine') {
-      const ctx = getAudioCtx();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.type = type;
-      osc.frequency.setValueAtTime(freq, ctx.currentTime);
-      gain.gain.setValueAtTime(0, ctx.currentTime);
-      gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.05);
-      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + duration);
-      osc.start(ctx.currentTime);
-      osc.stop(ctx.currentTime + duration);
-    }
-
-    function playInhale() { playTone(528, 0.4); }
-    function playHold() { playTone(396, 0.3, 'triangle'); }
-    function playExhale() { playTone(264, 0.6); }
-
-    const phaseColors = {
-      'Вдох': '#4a90d9',
-      'Задержка': '#9b7fd4',
-      'Выдох': '#4abfa8',
-      'Пауза': '#9b7fd4',
-    };
-
-    let rafId = null, phaseStart = null, phaseDuration = 0;
-
-    function animateProgress(timestamp) {
-      if (!phaseStart) phaseStart = timestamp;
-      const clamped = Math.min((timestamp - phaseStart) / phaseDuration, 1);
-      progressBar.style.width = (clamped * 100) + '%';
-      if (clamped < 1) rafId = requestAnimationFrame(animateProgress);
-    }
-
-    function startProgress(durationSeconds, phaseName) {
-      cancelAnimationFrame(rafId);
-      progressBar.style.width = '0%';
-      progressBar.style.background = phaseColors[phaseName] || '#4a90d9';
-      phaseStart = null;
-      phaseDuration = durationSeconds * 1000;
-      rafId = requestAnimationFrame(animateProgress);
-    }
-
-    let countdownTimer = null;
-
-    function startCountdown(seconds) {
-      clearInterval(countdownTimer);
-      let remaining = seconds;
-      countdown.textContent = remaining;
-      countdownTimer = setInterval(() => {
-        remaining -= 1;
-        countdown.textContent = remaining;
-        if (remaining <= 0) clearInterval(countdownTimer);
-      }, 1000);
-    }
-
-    let currentPhase = 0, cycleCount = 0, timer = null;
-
-    function nextPhase() {
-      const phases = getPhases();
-      const phase = phases[currentPhase];
-      phaseText.textContent = phase.name;
-      if (phase.name === 'Вдох') {
-        playInhale();
-        circle.style.transition = `transform ${phase.duration}s ease-in-out`;
-        circle.style.transform = 'scale(1.4)';
-      } else if (phase.name === 'Выдох' || phase.name === 'Пауза') {
-        playExhale();
-        circle.style.transition = `transform ${phase.duration}s ease-in-out`;
-        circle.style.transform = 'scale(1)';
-      } else {
-        playHold();
-      }
-      startCountdown(phase.duration);
-      startProgress(phase.duration, phase.name);
-      timer = setTimeout(() => {
-        currentPhase = (currentPhase + 1) % phases.length;
-        if (currentPhase === 0) { cycleCount++; cycleNum.textContent = cycleCount; }
-        nextPhase();
-      }, phase.duration * 1000);
-    }
-
-    function reset() {
-      clearTimeout(timer);
-      clearInterval(countdownTimer);
-      cancelAnimationFrame(rafId);
-      timer = null; countdownTimer = null; rafId = null;
-      currentPhase = 0; cycleCount = 0;
-      cycleNum.textContent = '0';
-      countdown.textContent = '4';
-      phaseText.textContent = 'Вдох';
-      btn.textContent = 'Начать';
-      circle.style.transition = 'transform 1s ease-in-out';
-      circle.style.transform = 'scale(1)';
-      progressBar.style.width = '0%';
-      stopMusic();
-    }
-
-    btn.addEventListener('click', () => {
-      if (timer) { reset(); } else { btn.textContent = 'Стоп'; nextPhase(); }
-    });
-
-    const music = new Audio('music.mp3');
-    music.loop = true;
-    music.volume = 0.3;
-    let musicEnabled = false;
-
-    musicFab.addEventListener('click', () => {
-      musicEnabled = !musicEnabled;
-      if (musicEnabled) {
-        music.play();
-        musicFab.classList.remove('off');
-      } else {
-        music.pause();
-        musicFab.classList.add('off');
-      }
-    });
-
-    function stopMusic() {
-      music.pause();
-      music.currentTime = 0;
-      musicEnabled = false;
-      musicFab.classList.add('off');
-    }
-  </script>
-
+// Prevent pull-to-refresh on mobile
+document.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+</script>
 </body>
 </html>
