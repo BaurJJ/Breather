@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Правильное дыхание</title>
+
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    #bg-video {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      z-index: -2;
+      filter: blur(3px);
+      opacity: 0.6;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      width: 100%; height: 100%;
+      background: rgba(15,27,45,0.7);
+      z-index: -1;
+    }
+
+    /* ONBOARDING */
+    #onboarding {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      background: rgba(10, 20, 35, 0.85);
+      backdrop-filter: blur(8px);
+    }
+
+    #onboarding.hidden { display: none; }
+
+    .onboarding-card {
+      background: rgba(26, 58, 92, 0.6);
+      border: 1px solid rgba(74, 144, 217, 0.4);
+      border-radius: 24px;
+      padding: 40px 32px;
+      width: 100%;
+      max-width: 320px;
+      text-align: center;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+    }
+
+    .onboarding-card h2 {
+      color: #a8c5e8;
+      font-size: 22px;
+      font-weight: 400;
+      margin: 0 0 8px;
+    }
+
+    .onboarding-card p {
+      color: #6a9cbf;
+      font-size: 14px;
+      margin: 0 0 28px;
+    }
+
+    .input-group {
+      margin-bottom: 16px;
+      text-align: left;
+    }
+
+    .input-group label {
+      display: block;
+      color: #6a9cbf;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .input-group input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px 16px;
+      background: rgba(74, 144, 217, 0.1);
+      border: 1px solid rgba(74, 144, 217, 0.3);
+      border-radius: 12px;
+      color: #e0f0ff;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .input-group input:focus { border-color: #4a90d9; }
+
+    .onboarding-btn {
+      width: 100%;
+      margin-top: 8px;
+      background: #4a90d9;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 16px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .onboarding-btn:hover { background: #5aa0e8; }
+    .onboarding-btn:active { transform: scale(0.98); }
+
+    /* MAIN */
+    .container {
+      text-align: center;
+      width: 100%;
+      max-width: 360px;
+      padding: 0 16px;
+      box-sizing: border-box;
+    }
+
+    #greeting-block { margin-bottom: 14px; }
+
+    #greeting-name {
+      color: #e0f0ff;
+      font-size: 18px;
+      font-weight: 300;
+      margin: 0 0 6px;
+    }
+
+    #quote-block {
+      background: rgba(74, 144, 217, 0.1);
+      border-left: 3px solid #4a90d9;
+      border-radius: 0 8px 8px 0;
+      padding: 10px 14px;
+      text-align: left;
+      margin-bottom: 4px;
+    }
+
+    #quote-text {
+      color: #a8c5e8;
+      font-size: 13px;
+      font-style: italic;
+      line-height: 1.5;
+      margin: 0 0 4px;
+    }
+
+    #quote-tag {
+      color: #4a90d9;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    #change-quote-btn {
+      background: none;
+      border: none;
+      color: #4a6a8a;
+      font-size: 11px;
+      cursor: pointer;
+      padding: 2px 0;
+      margin-bottom: 10px;
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    #change-quote-btn:hover { color: #a8c5e8; }
+
+    h1 {
+      color: #a8c5e8;
+      font-size: 20px;
+      margin: 0 0 12px;
+      font-weight: 400;
+    }
+
+    .mode-buttons {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .mode-buttons button {
+      flex: 1;
+      padding: 10px;
+      border-radius: 20px;
+      border: 1px solid #4a90d9;
+      background: transparent;
+      color: #a8c5e8;
+      cursor: pointer;
+      font-size: 13px;
+      transition: 0.3s;
+    }
+
+    .mode-buttons button.active {
+      background: #4a90d9;
+      color: white;
+    }
+
+    .circle {
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: #1a3a5c;
+      border: 3px solid #4a90d9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto 16px;
+      transition: transform 4s ease-in-out;
+    }
+
+    .circle-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .countdown {
+      color: white;
+      font-size: 56px;
+      font-weight: 200;
+      line-height: 1;
+    }
+
+    .phase-text {
+      color: #a8c5e8;
+      font-size: 15px;
+      margin-top: 6px;
+    }
+
+    .progress-wrap {
+      width: 100%; height: 6px;
+      background: #1a3a5c;
+      border-radius: 3px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%; width: 0%;
+      border-radius: 3px;
+      background: #4a90d9;
+      transition: background 0.4s;
+    }
+
+    .cycle-counter {
+      color: #a8c5e8;
+      font-size: 18px;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      margin-bottom: 20px;
+    }
+
+    .cycle-counter span {
+      color: #4a90d9;
+      font-size: 28px;
+      font-weight: 400;
+    }
+
+    .start-btn {
+      background: #4a90d9;
+      color: white;
+      border: none;
+      padding: 14px 40px;
+      border-radius: 30px;
+      font-size: 17px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .start-btn:hover { background: #5aa0e8; }
+
+    #music-fab {
+      position: fixed;
+      bottom: 20px; right: 20px;
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      background: #4a90d9;
+      color: white;
+      font-size: 24px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      z-index: 10;
+    }
+
+    #music-fab.off { background: #555; }
+
+    #profile-btn {
+      position: fixed;
+      bottom: 20px; left: 20px;
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      background: rgba(74,144,217,0.2);
+      border: 1px solid rgba(74,144,217,0.4);
+      color: #a8c5e8;
+      font-size: 22px;
+      cursor: pointer;
+      z-index: 10;
+      transition: background 0.2s;
+    }
+    #profile-btn:hover { background: rgba(74,144,217,0.35); }
+  </style>
+</head>
+
+<body>
+
+  <video autoplay muted loop id="bg-video">
+    <source src="bg.mp4" type="video/mp4">
+  </video>
+
+  <div id="onboarding">
+    <div class="onboarding-card">
+      <h2>Добро пожаловать 🌿</h2>
+      <p>Расскажи немного о себе, чтобы мы могли персонализировать опыт</p>
+      <div class="input-group">
+        <label>Твоё имя</label>
+        <input type="text" id="input-name" placeholder="Например, Алия" maxlength="30">
+      </div>
+      <div class="input-group">
+        <label>Возраст</label>
+        <input type="number" id="input-age" placeholder="Например, 28" min="5" max="120">
+      </div>
+      <button class="onboarding-btn" id="save-profile-btn">Начать путь →</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div id="greeting-block">
+      <p id="greeting-name"></p>
+      <div id="quote-block">
+        <p id="quote-text"></p>
+        <span id="quote-tag"></span>
+      </div>
+      <button id="change-quote-btn">другая цитата ↻</button>
+    </div>
+
+    <h1>Правильное дыхание</h1>
+
+    <div class="mode-buttons">
+      <button data-mode="478">😴 4-7-8</button>
+      <button data-mode="box" class="active">🧘 Box</button>
+      <button data-mode="classic">🌿 Классика</button>
+    </div>
+
+    <div class="circle" id="circle">
+      <div class="circle-content">
+        <span class="countdown" id="countdown">4</span>
+        <span class="phase-text" id="phase-text">Вдох</span>
+      </div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <div class="cycle-counter">
+      Цикл <span id="cycle-num">0</span>
+    </div>
+
+    <button class="start-btn" id="start-btn">Начать</button>
+  </div>
+
+  <button id="music-fab" class="off">🎧</button>
+  <button id="profile-btn" title="Изменить профиль">👤</button>
+
+  <script>
+    function getContent(age) {
+      const content = [];
+      if (age < 18) {
+        content.push({ text: `Ты в самом начале пути. Каждый день — это новая страница твоей истории.`, tag: '✨ мотивация' });
+        content.push({ text: 'В твоём возрасте мозг особенно пластичен. Дыхательные практики улучшают концентрацию и помогают учиться быстрее.', tag: '🧠 факт о мозге' });
+        content.push({ text: 'Глубокое дыхание снижает кортизол — гормон стресса. Всего 5 минут в день меняют твоё состояние.', tag: '🫁 польза дыхания' });
+        content.push({ text: 'Твоё тело сейчас растёт и развивается. Кислород — главное топливо этого процесса.', tag: '💪 здоровье' });
+      } else if (age < 25) {
+        content.push({ text: `Твои 20-е — время строить фундамент. То, что ты делаешь сейчас, определяет следующие 20 лет.`, tag: '🚀 карьера' });
+        content.push({ text: 'Осознанное дыхание активирует префронтальную кору мозга — зону принятия решений. Особенно важно перед важными встречами.', tag: '🧠 наука' });
+        content.push({ text: 'В 20 лет лёгкие работают на максимуме. Тренируй их сейчас — они будут служить тебе десятилетия.', tag: '🫁 факт' });
+        content.push({ text: 'Молодой организм восстанавливается быстро. Но хороший сон и дыхание ускоряют восстановление в 2 раза.', tag: '⚡ энергия' });
+      } else if (age < 35) {
+        content.push({ text: `Ты в расцвете сил. Баланс между амбициями и спокойствием — твоя суперсила.`, tag: '⚖️ баланс' });
+        content.push({ text: 'Техника Box breathing используется спецназом США для управления стрессом в экстремальных ситуациях.', tag: '🎖️ интересный факт' });
+        content.push({ text: 'В 30 лет метаболизм начинает замедляться. Дыхательные практики поддерживают обмен веществ на высоком уровне.', tag: '🔥 метаболизм' });
+        content.push({ text: 'Хронический стресс сокращает теломеры — концы хромосом, отвечающие за молодость. Медитация и дыхание замедляют этот процесс.', tag: '🧬 долголетие' });
+      } else if (age < 50) {
+        content.push({ text: `40-е — это не середина пути, это второй старт. Мудрость и энергия встречаются здесь.`, tag: '🌟 мудрость' });
+        content.push({ text: 'После 40 лёгкие начинают терять 1% объёма в год. Регулярные дыхательные упражнения замедляют этот процесс.', tag: '🫁 важно знать' });
+        content.push({ text: 'Глубокое дыхание стимулирует блуждающий нерв — главный регулятор спокойствия и пищеварения.', tag: '🧘 польза' });
+        content.push({ text: 'Люди, практикующие осознанное дыхание, имеют более низкое давление и меньший риск сердечно-сосудистых заболеваний.', tag: '❤️ сердце' });
+      } else if (age < 65) {
+        content.push({ text: `Твой опыт — это богатство. Забота о теле в этом возрасте — самая умная инвестиция.`, tag: '💎 мудрость' });
+        content.push({ text: 'После 50 дыхание становится более поверхностным. Техника 4-7-8 помогает полностью раскрыть лёгкие и насытить кровь кислородом.', tag: '🫁 для тебя' });
+        content.push({ text: 'Исследования показывают: люди, медитирующие с 50 лет, имеют мозг моложе на 7 лет по сравнению со сверстниками.', tag: '🧠 наука' });
+        content.push({ text: 'Спокойное дыхание снижает воспалительные процессы в организме — одну из главных причин старения.', tag: '🌿 здоровье' });
+      } else {
+        content.push({ text: `Мудрость приходит к тем, кто умеет замедляться. Каждый вдох — это подарок.`, tag: '🙏 благодарность' });
+        content.push({ text: 'После 65 лет дыхательные практики особенно важны: они поддерживают гибкость диафрагмы и насыщение крови кислородом.', tag: '🫁 здоровье' });
+        content.push({ text: 'Глубокое дыхание стимулирует лимфатическую систему — главный механизм очищения организма.', tag: '💧 очищение' });
+        content.push({ text: 'Японские долгожители из Окинавы практикуют осознанное дыхание как часть ежедневного ритуала.', tag: '🌏 долголетие' });
+      }
+      return content;
+    }
+
+    let userName = '', userAge = 0, currentQuoteIndex = 0, quotePool = [];
+
+    function loadProfile() {
+      userName = localStorage.getItem('bp_name') || '';
+      userAge = parseInt(localStorage.getItem('bp_age')) || 0;
+      return userName && userAge;
+    }
+
+    function saveProfile(name, age) {
+      localStorage.setItem('bp_name', name);
+      localStorage.setItem('bp_age', age);
+      userName = name;
+      userAge = age;
+    }
+
+    function showApp() {
+      document.getElementById('onboarding').classList.add('hidden');
+      quotePool = getContent(userAge);
+      currentQuoteIndex = Math.floor(Math.random() * quotePool.length);
+      renderGreeting();
+    }
+
+    function renderGreeting() {
+      document.getElementById('greeting-name').textContent = `Привет, ${userName} 👋`;
+      const q = quotePool[currentQuoteIndex];
+      document.getElementById('quote-text').textContent = q.text;
+      document.getElementById('quote-tag').textContent = q.tag;
+    }
+
+    document.getElementById('change-quote-btn').addEventListener('click', () => {
+      currentQuoteIndex = (currentQuoteIndex + 1) % quotePool.length;
+      renderGreeting();
+    });
+
+    document.getElementById('profile-btn').addEventListener('click', () => {
+      document.getElementById('onboarding').classList.remove('hidden');
+      document.getElementById('input-name').value = userName;
+      document.getElementById('input-age').value = userAge;
+    });
+
+    document.getElementById('save-profile-btn').addEventListener('click', () => {
+      const name = document.getElementById('input-name').value.trim();
+      const age = parseInt(document.getElementById('input-age').value);
+      if (!name) { document.getElementById('input-name').style.borderColor = '#e05a5a'; return; }
+      if (!age || age < 5 || age > 120) { document.getElementById('input-age').style.borderColor = '#e05a5a'; return; }
+      saveProfile(name, age);
+      showApp();
+    });
+
+    document.getElementById('input-name').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('input-age').focus();
+    });
+    document.getElementById('input-age').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('save-profile-btn').click();
+    });
+
+    if (loadProfile()) showApp();
+
+    // ===== ДЫХАНИЕ =====
+    const circle = document.getElementById('circle');
+    const phaseText = document.getElementById('phase-text');
+    const countdown = document.getElementById('countdown');
+    const btn = document.getElementById('start-btn');
+    const cycleNum = document.getElementById('cycle-num');
+    const progressBar = document.getElementById('progress-bar');
+    const musicFab = document.getElementById('music-fab');
+
+    let currentMode = 'box';
+    const modeButtons = document.querySelectorAll('.mode-buttons button');
+
+    modeButtons.forEach(b => {
+      b.addEventListener('click', () => {
+        currentMode = b.dataset.mode;
+        modeButtons.forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        if (timer) reset();
+      });
+    });
+
+    const techniques = {
+      '478': [
+        { name: 'Вдох', duration: 4 },
+        { name: 'Задержка', duration: 7 },
+        { name: 'Выдох', duration: 8 },
+      ],
+      'box': [
+        { name: 'Вдох', duration: 4 },
+        { name: 'Задержка', duration: 4 },
+        { name: 'Выдох', duration: 4 },
+        { name: 'Пауза', duration: 4 },
+      ],
+      'classic': [
+        { name: 'Вдох', duration: 4 },
+        { name: 'Задержка', duration: 4 },
+        { name: 'Выдох', duration: 6 },
+      ],
+    };
+
+    function getPhases() { return techniques[currentMode]; }
+
+    let audioCtx = null;
+    function getAudioCtx() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      return audioCtx;
+    }
+
+    function playTone(freq, duration, type = 'sine') {
+      const ctx = getAudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, ctx.currentTime);
+      gain.gain.setValueAtTime(0, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.05);
+      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + duration);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + duration);
+    }
+
+    function playInhale() { playTone(528, 0.4); }
+    function playHold() { playTone(396, 0.3, 'triangle'); }
+    function playExhale() { playTone(264, 0.6); }
+
+    const phaseColors = {
+      'Вдох': '#4a90d9',
+      'Задержка': '#9b7fd4',
+      'Выдох': '#4abfa8',
+      'Пауза': '#9b7fd4',
+    };
+
+    let rafId = null, phaseStart = null, phaseDuration = 0;
+
+    function animateProgress(timestamp) {
+      if (!phaseStart) phaseStart = timestamp;
+      const clamped = Math.min((timestamp - phaseStart) / phaseDuration, 1);
+      progressBar.style.width = (clamped * 100) + '%';
+      if (clamped < 1) rafId = requestAnimationFrame(animateProgress);
+    }
+
+    function startProgress(durationSeconds, phaseName) {
+      cancelAnimationFrame(rafId);
+      progressBar.style.width = '0%';
+      progressBar.style.background = phaseColors[phaseName] || '#4a90d9';
+      phaseStart = null;
+      phaseDuration = durationSeconds * 1000;
+      rafId = requestAnimationFrame(animateProgress);
+    }
+
+    let countdownTimer = null;
+
+    function startCountdown(seconds) {
+      clearInterval(countdownTimer);
+      let remaining = seconds;
+      countdown.textContent = remaining;
+      countdownTimer = setInterval(() => {
+        remaining -= 1;
+        countdown.textContent = remaining;
+        if (remaining <= 0) clearInterval(countdownTimer);
+      }, 1000);
+    }
+
+    let currentPhase = 0, cycleCount = 0, timer = null;
+
+    function nextPhase() {
+      const phases = getPhases();
+      const phase = phases[currentPhase];
+      phaseText.textContent = phase.name;
+      if (phase.name === 'Вдох') {
+        playInhale();
+        circle.style.transition = `transform ${phase.duration}s ease-in-out`;
+        circle.style.transform = 'scale(1.4)';
+      } else if (phase.name === 'Выдох' || phase.name === 'Пауза') {
+        playExhale();
+        circle.style.transition = `transform ${phase.duration}s ease-in-out`;
+        circle.style.transform = 'scale(1)';
+      } else {
+        playHold();
+      }
+      startCountdown(phase.duration);
+      startProgress(phase.duration, phase.name);
+      timer = setTimeout(() => {
+        currentPhase = (currentPhase + 1) % phases.length;
+        if (currentPhase === 0) { cycleCount++; cycleNum.textContent = cycleCount; }
+        nextPhase();
+      }, phase.duration * 1000);
+    }
+
+    function reset() {
+      clearTimeout(timer);
+      clearInterval(countdownTimer);
+      cancelAnimationFrame(rafId);
+      timer = null; countdownTimer = null; rafId = null;
+      currentPhase = 0; cycleCount = 0;
+      cycleNum.textContent = '0';
+      countdown.textContent = '4';
+      phaseText.textContent = 'Вдох';
+      btn.textContent = 'Начать';
+      circle.style.transition = 'transform 1s ease-in-out';
+      circle.style.transform = 'scale(1)';
+      progressBar.style.width = '0%';
+      stopMusic();
+    }
+
+    btn.addEventListener('click', () => {
+      if (timer) { reset(); } else { btn.textContent = 'Стоп'; nextPhase(); }
+    });
+
+    const music = new Audio('music.mp3');
+    music.loop = true;
+    music.volume = 0.3;
+    let musicEnabled = false;
+
+    musicFab.addEventListener('click', () => {
+      musicEnabled = !musicEnabled;
+      if (musicEnabled) {
+        music.play();
+        musicFab.classList.remove('off');
+      } else {
+        music.pause();
+        musicFab.classList.add('off');
+      }
+    });
+
+    function stopMusic() {
+      music.pause();
+      music.currentTime = 0;
+      musicEnabled = false;
+      musicFab.classList.add('off');
+    }
+  </script>
+
+</body>
+</html>
