@@ -2,21 +2,24 @@
   "name": "Дыхание",
   "short_name": "Дыхание",
   "description": "Осознанные дыхательные практики",
-  "start_url": "./index.html",
+  "start_url": "/Breather/",
+  "scope": "/Breather/",
   "display": "standalone",
-  "background_color": "#060e1e",
-  "theme_color": "#0a1628",
   "orientation": "portrait",
+  "background_color": "#050810",
+  "theme_color": "#0a0f1e",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "https://via.placeholder.com/192/050810/7eb8d4?text=B",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "icon-512.png",
+      "src": "https://via.placeholder.com/512/050810/7eb8d4?text=B",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
